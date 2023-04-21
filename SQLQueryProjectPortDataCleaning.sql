@@ -1,13 +1,9 @@
-/*
-Cleaning Data in SQL Queries
-*/
+/*Cleaning Data in SQL*/
 
 Select *
 From NashvilleHousing
 
---------------------------------------------------------------------------------------------------------------------------
-
--- Standardize Date Format
+-----------Standardize the Date 
 
 Select saleDateConverted, CONVERT(Date,SaleDate)
 From NashvilleHousing
@@ -24,13 +20,10 @@ Add SaleDateConverted Date;
 Update NashvilleHousing
 SET SaleDateConverted = CONVERT(Date,SaleDate)
 
- --------------------------------------------------------------------------------------------------------------------------
-
--- Populate Property Address data
+ -----------Fill in Property Address data
 
 Select *
 From NashvilleHousing
---Where PropertyAddress is null
 order by ParcelID
 
 
@@ -41,7 +34,7 @@ JOIN NashvilleHousing b
 	AND a.[UniqueID ] <> b.[UniqueID ]
 Where a.PropertyAddress is null
 
----Update NULL PropertyAddress
+----------Update NULL PropertyAddress
 Update a
 SET PropertyAddress = ISNULL(a.PropertyAddress,b.PropertyAddress)
 From PortfolioProject.dbo.NashvilleHousing a
@@ -50,13 +43,10 @@ JOIN PortfolioProject.dbo.NashvilleHousing b
 	AND a.[UniqueID ] <> b.[UniqueID ]
 Where a.PropertyAddress is null
 
---------------------------------------------------------------------------------------------------------------------------
--- Breaking out Address into Individual Columns (Address, City, State)
+-------------- Split Address into Individual Columns (Address, City, State)
 
 Select PropertyAddress
 From PortfolioProject.dbo.NashvilleHousing
---Where PropertyAddress is null
---order by ParcelID
 
 SELECT
 SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1) as Address,
@@ -108,8 +98,7 @@ Add OwnerSplitState Nvarchar(255);
 Update NashvilleHousing
 SET OwnerSplitState = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 1)
 
---------------------------------------------------------------------------------------------------------------------------
--- Change Y and N to Yes and No in "Sold as Vacant" field
+------------- Change the values Y and N to Yes and No in the "Sold as Vacant" field
 
 Select Distinct(SoldAsVacant) , Count(SoldAsVacant)
 From NashvilleHousing
@@ -131,9 +120,7 @@ SET SoldAsVacant = CASE When SoldAsVacant = 'Y' THEN 'Yes'
 	   ELSE SoldAsVacant
 	   END
 
------------------------------------------------------------------------------------------------------------------------------------------------------------
-
--- Remove Duplicates
+-----------------Remove any duplicates
 
 WITH RowNumCTE AS(
 Select *,
@@ -157,9 +144,7 @@ Order by PropertyAddress
 Select *
 From NashvilleHousing
 
----------------------------------------------------------------------------------------------------------
-
--- Delete Unused Columns
+----------Delete Unused Columns
 
 Select *
 From NashvilleHousing
